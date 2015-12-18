@@ -14,6 +14,14 @@ tr {
   height: 20px;
 }
 
+td.white {
+  background-color: white;
+}
+
 td.black {
   background-color: black;
+}
+
+td.grey {
+  background-color: gray;
 }
