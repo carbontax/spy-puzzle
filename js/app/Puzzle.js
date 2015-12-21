@@ -16,6 +16,9 @@ define(["app/Utils", "app/Addresses", "app/Sequence", "conf/config"], function(U
       data.rows.forEach(function(row) {
         self.rows.push(new Sequence(row));
       });
+      data.columns.forEach(function(col) {
+        self.columns.push(new Sequence(col));
+      });
     };
   };
   return Puzzle;

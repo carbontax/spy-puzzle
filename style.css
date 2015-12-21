@@ -7,11 +7,11 @@ table{
 th, td {
     border: 1px solid black;
     overflow: hidden;
-    width: 20px;
+    width: 30px;
 }
 
 tr {
-  height: 20px;
+  height: 30px;
 }
 
 td.white {
@@ -24,4 +24,8 @@ td.black {
 
 td.grey {
   background-color: gray;
+}
+
+td.red {
+  background-color: red;
 }
