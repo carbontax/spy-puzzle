@@ -1,5 +1,6 @@
 define(["app/Utils", "app/RunList"], function(Utils, RunList) {
-  var Sequence = function(data) {
+  var Sequence = function(index, data) {
+    this.index = index;
     this.runs;
     this.loadData(data);
   };
@@ -16,10 +17,6 @@ define(["app/Utils", "app/RunList"], function(Utils, RunList) {
 
   Sequence.prototype.minLength = function() {
     return this.runs.minLength();
-  };
-
-  Sequence.prototype.compile = function() {
-    return this.runs.compile();
   };
 
   return Sequence;

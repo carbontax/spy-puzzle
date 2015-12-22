@@ -31,32 +31,40 @@ define(["jquery", "app/Puzzle", "app/data", "conf/config"], function($, Puzzle, 
   };
 
   var updateCellContents = function(elem, x, y) {
-      $(elem).html(x + ", " + y);
+    $(elem).html(x + ", " + y);
+  };
+
+  var updateTableFromGrid = function() {
+     for(var i=0; i < _p.grid.length; i++) {
+       for(var j=0; j < _p.grid.length; j++) {
+         addCssClass($('tr.row_' + i + ' td.col_' + j),_p.grid[i][j]);
+       }
+     }
   };
 
   $(document).ready(function() {
-    $('td').addClass(config.UNTESTED);
+    //$('td').addClass(config.UNTESTED);
+    $('tr').addClass(function() {
+        return 'row_' + $(this).index();
+    });
+    $('td').addClass(function() {
+        return 'col_' + $(this).index();
+    });
     _p.loadData(data);
 
-    var rows = $('tr');
-    _p.addresses.each(function(a) {
-      var row = rows.get(a.row);
-      var cols = $(row).find('td');
-      addCssClass(cols.get(a.column), config.BLACK);
+    //var rows = $('tr');
+    
+    _p.initGridConstants(updateTableFromGrid);
+
+    _p.rows.forEach(function(r) {
+        r.compile(_p.grid);
+        updateTableFromGrid();
     });
-    var compiledCols = [];
+
     _p.columns.forEach(function(c) {
-        compiledCols.push(c.compile());
+        c.compile(_p.grid);
+        updateTableFromGrid();
     });
-    for(var i=0; i<config.gridSize; i++) {
-        var tr = rows.get(i);
-        var compiledRow = _p.rows[i].compile();
-        var cols = $(tr).find('td');
-        for(var j=0; j<config.gridSize; j++) {
-            resolveCssClass(cols.get(j), compiledRow[j], compiledCols[j][i]);
-            updateCellContents(cols.get(j), compiledRow[j], compiledCols[j][i]);
-        }
-    }
 
   });
 });
