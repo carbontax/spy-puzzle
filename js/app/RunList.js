@@ -20,22 +20,28 @@ define(["conf/config", "app/Run"], function(config, Run) {
     return minLength;
   }
 
-  RunList.prototype.compile = function() {
+  RunList.prototype.compile = function(master) {
     var self = this;
-    var slack = config.gridSize - self.minLength();
-    var arr = self.initCompiledArray();
+    var slack = master.length - self.minLength();
+    var testing = self.copyMasterForTesting(master);
     self.runs.forEach(function(r) {
-      r.compile(arr, slack);
+      r.compile(master, testing, slack);
     });
-    return arr;
+    for(var i=0; i<master.length; i++) {
+      master[i] = testing[i];
+    }
   };
 
-  RunList.prototype.initCompiledArray = function() {
+  RunList.prototype.copyMasterForTesting = function(master) {
     var arr = [];
-    for (var i = 0; i < config.gridSize; i++) {
-      arr[i] = 0;
+    for (var i = 0; i < master.length; i++) {
+      arr[i] = master[i];
+      if(arr[i] === config.GREY) {
+        arr[i] = config.UNTESTED;
+      }
     }
     return arr;
   };
+
   return RunList;
 });

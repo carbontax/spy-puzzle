@@ -5,44 +5,63 @@ define(["conf/config"], function(config) {
     this.slack = 0;
   };
 
-  Run.prototype.compile = function(arr, slack) {
+  Run.prototype.compile = function(master, testing, slack) {
     var self = this;
     self.slack = slack;
-    self.permutations(function(m) {
-      self.compute(arr, m);
+    self.permutations(function(p) {
+      self.compute(master, testing, p);
     });
   };
 
   Run.prototype.permutations = function(callback) {
-    var self = this, arr = this.initCompiledArray();
+    var self = this; permutation = this.initCompiledArray();
     for (var i=0; i<=self.slack; i++) {
-      callback(arr);
-      self.rotate(arr);
+      callback(permutation);
+      self.rotate(permutation);
     }
   };
 
-  Run.prototype.rotate = function(arr) {
-    arr.unshift(config.WHITE);
-    arr.pop();
+  Run.prototype.rotate = function(permutation) {
+    permutation.unshift(config.WHITE);
+    permutation.pop();
   };
 
-  Run.prototype.compute = function(arr, me) {
+  Run.prototype.compute = function(master, testing, me) {
     var self = this;
+    if(self.contradicts(master, me)) {
+      // discard this permutation
+      return;
+    }
     for(var i=0; i<me.length; i++) {
       var arrIndex = self.offset + i;
-      if(arrIndex > arr.length - 1) {
+      if(arrIndex > testing.length - 1) {
         break;
       }
       var value = me[i];
-      if(arr[arrIndex] === config.UNTESTED || arr[arrIndex] === value) { 
-        arr[arrIndex] = value;
+      if(testing[arrIndex] === config.UNTESTED || testing[arrIndex] === value) { 
+        testing[arrIndex] = value;
       } else {
-        arr[arrIndex] = config.GREY;
+        testing[arrIndex] = config.GREY;
       }
     }
   };
 
-  Run.prototype.initCompiledArray = function() {
+  Run.prototype.contradicts = function(master, me) {
+    var self = this, contradiction = false;
+    for(var i=0; i<me.length; i++) {
+      var arrIndex = self.offset + i;
+      if(arrIndex > master.length - 1) {
+        break;
+      }
+      if(master[arrIndex] !== config.GREY && master[arrIndex] !== me[i]) { 
+        contradiction = true;
+        break;
+      }
+    }
+    return contradiction;
+  };
+
+ Run.prototype.initCompiledArray = function() {
     var arr = [];
     for (var i = 0; i < this.count; i++) {
       arr[i] = config.BLACK;
